@@ -3,31 +3,15 @@ import styled from "styled-components";
 
 const API_BASE_URL = "http://localhost:5001";
 
-const UploadForm = styled.div`
-  margin-bottom: 20px;
-`;
-
-const Button = styled.label`
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
-
 const FileUpload = ({ setPdfUrl }) => {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) {
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      alert("PDF 파일만 업로드 가능합니다.");
       return;
     }
 
@@ -39,13 +23,8 @@ const FileUpload = ({ setPdfUrl }) => {
         method: "POST",
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error("파일 업로드 실패");
-      }
-
       const data = await response.json();
-      setPdfUrl(`${API_BASE_URL}${data.url}`);
+      setPdfUrl(data.url);
     } catch (error) {
       console.error("업로드 중 에러 발생:", error.message);
       alert("파일 업로드에 실패했습니다. 다시 시도해주세요.");
@@ -53,16 +32,37 @@ const FileUpload = ({ setPdfUrl }) => {
   };
 
   return (
-    <UploadForm>
-      <Button htmlFor="file-upload">PDF 업로드</Button>
-      <HiddenInput
+    <S.Wrapper>
+      <S.Button htmlFor="file-upload">PDF 업로드</S.Button>
+      <S.HiddenInput
         id="file-upload"
         type="file"
         accept="application/pdf"
         onChange={handleFileChange}
       />
-    </UploadForm>
+    </S.Wrapper>
   );
+};
+
+const S = {
+  Wrapper: styled.div`
+    margin-bottom: 20px;
+  `,
+  Button: styled.label`
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background-color: #0056b3;
+    }
+  `,
+  HiddenInput: styled.input`
+    display: none;
+  `,
 };
 
 export default FileUpload;

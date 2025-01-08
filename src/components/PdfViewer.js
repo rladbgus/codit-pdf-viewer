@@ -11,7 +11,7 @@ function PdfViewer({ pdfUrl }) {
     const renderPdf = async () => {
       try {
         // PDF 불러오기
-        const pdf = await pdfjs.getDocument("2100113_medical_bill.pdf").promise;
+        const pdf = await pdfjs.getDocument(pdfUrl).promise;
         const viewer = viewerRef.current;
 
         if (!viewer) {
