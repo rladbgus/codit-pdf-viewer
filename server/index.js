@@ -15,15 +15,9 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     let decodedFilename = file.originalname;
-
-    try {
-      decodedFilename = Buffer.from(file.originalname, "latin1").toString(
-        "utf-8"
-      );
-    } catch (error) {
-      console.warn("파일 이름 디코딩 실패, 원본 사용:", file.originalname);
-    }
-
+    decodedFilename = Buffer.from(file.originalname, "latin1").toString(
+      "utf-8"
+    );
     // 파일 이름에 타임스탬프 추가
     const uniqueFilename = `${Date.now()}-${decodedFilename}`;
     cb(null, uniqueFilename);
@@ -31,7 +25,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // 정적 파일 제공
+// 정적 파일 제공
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
